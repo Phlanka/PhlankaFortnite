@@ -1,7 +1,7 @@
 bl_info = {
     "name": "Phlanka Fortnite",
     "author": "Phlanka",
-    "version": (1, 0, 1),
+    "version": (1, 0, 3),
     "blender": (4, 3, 0),
     "location": "Node Editor > Sidebar > Phlanka Fortnite",
     "description": "Replaces the main material node with PhlankaFortnite in all materials",
@@ -10,6 +10,7 @@ bl_info = {
 
 import bpy
 import os
+from . import update_checker
 
 # Function to replace the node connected to Material Output
 def replace_node_group(context):
@@ -140,6 +141,12 @@ class PHLANKA_PT_MaterialPanel(bpy.types.Panel):
     def draw(self, context):
         layout = self.layout
         layout.operator("phlanka.convert_to_dayz")
+        
+        # Add a separator and update section
+        layout.separator()
+        box = layout.box()
+        box.label(text="Updates")
+        box.operator("phlanka.check_for_updates", text="Check for Updates")
 
 
 # Operator for button
@@ -194,10 +201,16 @@ def register():
     
     # Add the menu item to the outliner context menu
     bpy.types.OUTLINER_MT_context_menu.append(draw_outliner_context_menu)
+    
+    # Register update checker
+    update_checker.register()
 
 def unregister():
     # Remove the menu item from the outliner context menu
     bpy.types.OUTLINER_MT_context_menu.remove(draw_outliner_context_menu)
+    
+    # Unregister update checker
+    update_checker.unregister()
     
     for cls in reversed(classes):
         bpy.utils.unregister_class(cls)
