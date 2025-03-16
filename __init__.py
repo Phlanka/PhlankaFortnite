@@ -1,7 +1,7 @@
 bl_info = {
     "name": "Phlanka Fortnite",
     "author": "Phlanka",
-    "version": (1, 0, 3),
+    "version": (1, 0, 4),
     "blender": (4, 3, 0),
     "location": "Node Editor > Sidebar > Phlanka Fortnite",
     "description": "Replaces the main material node with PhlankaFortnite in all materials",
@@ -17,7 +17,8 @@ def replace_node_group(context):
     # Define the node groups to replace
     replacements = {
         "PhlankaFortnite": "FPv3 Material",  # Will replace FPv3 Material nodes
-        "PhlankaGlassFortnite": "FPv3 Glass"  # Will specifically replace FPv3 Glass nodes
+        "PhlankaGlassFortnite": "FPv3 Glass",  # Will specifically replace FPv3 Glass nodes
+        "PhlankaLayersFortnite": "FPv3 Layer"  # Will specifically replace FPv3 Layer nodes
     }
 
     # Load the node groups from Assets.blend
@@ -79,10 +80,10 @@ def replace_node_group(context):
                     main_node = output_node.inputs[0].links[0].from_node
                     # Only replace if it's a GROUP node and not already handled
                     if main_node.type == 'GROUP' and main_node.node_tree:
-                        # Skip if it's already one of our nodes or if it's FPv3 Glass (which should be replaced with PhlankaGlassFortnite)
-                        if (main_node.node_tree.name != "PhlankaFortnite" and 
-                            main_node.node_tree.name != "PhlankaGlassFortnite" and
-                            main_node.node_tree.name != "FPv3 Glass"):
+                        # Skip if it's already one of our nodes or if it's a specific node that should be replaced with something else
+                        excluded_nodes = ["PhlankaFortnite", "PhlankaGlassFortnite", "PhlankaLayersFortnite", 
+                                         "FPv3 Glass", "FPv3 Layer"]
+                        if main_node.node_tree.name not in excluded_nodes:
                             replace_single_node(main_node, loaded_groups["PhlankaFortnite"], nodes, links)
 
     return {'FINISHED'}
